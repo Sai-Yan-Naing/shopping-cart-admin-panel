@@ -7,7 +7,7 @@
 <script src="js/bootstrap.bundle.js"></script>
 <style>
 body {
-    background-color: grey
+    background-color: grey;
 }
 
 .padding {
@@ -61,11 +61,37 @@ h2 {
 }
 </style>
 </head>
+<?php
+    include("confs/config.php");
+    session_start();
+    
+    if (isset($_POST['email'])) {
+        $email = stripslashes($_REQUEST['email']);    
+        $email= mysqli_real_escape_string($conn, $email);
+        $password = stripslashes($_REQUEST['password']);
+        $password = mysqli_real_escape_string($conn, $password);
+        
+        $query    = "SELECT * FROM `admintable` WHERE email='$email'
+                     AND password='$password'";
+        $result = mysqli_query($conn, $query) or die(mysql_error());
+        $rows = mysqli_num_rows($result);
+        if ($rows == 1) {
+            $_SESSION['email'] = $email;
+            header("Location: dashboard.php");
+        } else {
+            echo "<div>
+                  <h3>Incorrect Username/password.</h3><br/>
+                  <p>Click here to <a href='index.php'>Signin</a> again.</p>
+                  </div>";
+        }
+    }
+else{
+  ?>
 <body>
      <div class="padding container d-flex justify-content-center">
      <div class="col-md-10 col-md-offset-1">
-        <form action="login.php" method="post" class="signup-form">
-            <h2 class="text-center">SIGNUP NOW</h2>
+        <form action=" " method="post" class="signup-form">
+            <h2 class="text-center">SIGNIN NOW</h2>
             <hr>
             <div class="form-group mb-3">
              <input type="email" class="form-control" name="email" placeholder="Email Address" required="required"> 
@@ -74,10 +100,14 @@ h2 {
              <input type="password" class="form-control" name="password" placeholder="Password" required="required"> 
            </div>
            <div class="form-group text-center"> 
-            	<button type="submit" class="btn btn-blue btn-block">SIGNUP</button>
+            	<button type="submit" class="btn btn-blue btn-block">Login</button>
            </div>
+           <a href="adminsignup.php">Don't have account.Please login again</a>
         </form>
      </div>
    </div>
+   <?php
+}
+?>
 </body>
 </html>
